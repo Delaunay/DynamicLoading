@@ -2,7 +2,7 @@
 #define PLUGIN_LIBRARY_HEADER
 
 // This header should be (does not have to be) included by people implementing the plugin
-// It only make sure the user will be implementing the create and destroy function
+// It only makes sure users will be implementing the create and destroy function
 // with the correct setup (they must be externed "C" and have the PLUGIN_EXPORT macro)
 // they can modify the create/destroy function name by defining:
 // - DYN_CREATE_OBJ

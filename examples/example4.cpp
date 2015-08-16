@@ -14,17 +14,15 @@ using namespace std;
 using namespace DynamicLoading;
 
 #ifdef __linux__
-#   define name_fix(path, name) "./" + path + "lib" + name + ".so"
+#   define name_fix(path, name) "./" + string(path) + "lib" + string(name) + ".so"
 #else
-#   define name_fix(path, name) "./" + path + name + ".dll"
+#   define name_fix(path, name) "./" + string(path) + string(name) + ".dll"
 #endif
-
 
 
 int main(int argc, char** argv)
 {
-    DynamicObject<Base> object(name_fix(string("plugin/"),
-                                        string("ex4_plugin1")));
+    DynamicObject<Base> object(name_fix("plugin/", "ex4_plugin1"));
 
     cout << "     Obj : " << object->function() << "\n";
 

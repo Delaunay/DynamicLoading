@@ -63,6 +63,7 @@ std::string& destroy_function_name()
  *  DynamicObject<BaseObject2> dyn_object2(sl, "create2", "destroy2");
  *
  */
+//#include <functional>
 
 template<typename T>
 class DynamicObject
