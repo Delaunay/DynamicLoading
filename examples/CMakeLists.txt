@@ -35,13 +35,16 @@ target_link_libraries(example3 plugin_library ${SYSTEM_LIB}) # -ldl is for linux
 add_executable(example4 example4.cpp ${OBJ_SRC} ex4_Base.h)
 target_link_libraries(example4 plugin_library ${SYSTEM_LIB}) # -ldl is for linux only
 
-# include eigen
-INCLUDE_DIRECTORIES(C:/Users/pastafarian/Dropbox/libraries/include)
 
-SET(OBJ2_SRC
-    ObjType2.h
-    ObjType2.cpp
-)
+IF(FALSE)
+    # this example need eigen
+    INCLUDE_DIRECTORIES(C:/Users/pastafarian/Dropbox/libraries/include)
 
-add_executable(example5 example5.cpp ${OBJ_SRC} ex5_Base.h)
-target_link_libraries(example5 plugin_library ${SYSTEM_LIB}) # -ldl is for linux only
+    SET(OBJ2_SRC
+        ObjType2.h
+        ObjType2.cpp
+    )
+
+    add_executable(example5 example5.cpp ${OBJ_SRC} ex5_Base.h)
+    target_link_libraries(example5 plugin_library ${SYSTEM_LIB}) # -ldl is for linux only
+ENDIF()
