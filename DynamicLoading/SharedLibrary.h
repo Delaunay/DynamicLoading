@@ -17,9 +17,22 @@
 #endif
 
 namespace DynamicLoading{
+
+// "./" make the prog seek the dll in the exe folder
+inline std::string name_fix(const std::string& name, const std::string& path = "./")
+{
+#ifdef __linux__
+    return path + "lib" + name + ".so";
+#elif __MINGW32__
+    return path + "lib" + name + ".dll";
+#else
+    return path + name + ".dll";
+#endif
+}
+
 /*!
  * This class load a SharedLibrary (dll) and enable you to retrieve
- * its function. Behavior may change accross operating system (see dlopen
+ * its functions. Behavior may change accross operating system (see dlopen
  * and LoadLibraryA for more details)
  *
  * Usage
@@ -58,14 +71,14 @@ public:
 
     SharedLibrary& operator= (const SharedLibrary& lib);
 
-    ~SharedLibrary();
+    ~SharedLibrary() noexcept;
 
     inline operator bool() const    {   return _module != 0; }
 
     template<typename T>
     T get_function(const std::string& name) const
     {
-        T t = reinterpret_cast<T>(dlsym(_module, name.c_str()));    // reinterpret_cast of nullptr works
+        T t = reinterpret_cast<T>(dlsym(_module, name.c_str()));   // reinterpret_cast of nullptr works
         THROW(t == 0, std::runtime_error, "Unknown Symbol");       //
         return t;
     }

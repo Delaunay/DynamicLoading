@@ -9,3 +9,4 @@ std::ostream& operator<< (std::ostream& os, const ObjType& t)
     os << "(" << t.x << "x" << t.y << ")";
     return os;
 }
+

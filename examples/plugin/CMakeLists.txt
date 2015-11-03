@@ -13,5 +13,12 @@ SET(OBJ_SRC
     ../ObjType.cpp
 )
 
-
 add_library(ex4_plugin1 SHARED ex4_plugin1.cpp ${OBJ_SRC})
+
+
+SET(OBJ2_SRC
+    ../ObjType2.h
+    ../ObjType2.cpp
+)
+
+add_library(ex5_plugin1 SHARED ex5_plugin1.cpp ${OBJ2_SRC})

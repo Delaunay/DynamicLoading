@@ -20,6 +20,7 @@ std::string& destroy_function_name()
 }
 
 
+
 /*!
  *  Represent an Object loaded from a Shared Library (dll).
  *  The underlying object is accessed as if DynamicObject<> was
@@ -69,6 +70,12 @@ template<typename T>
 class DynamicObject
 {
 public:
+
+    // I can't use C++11 here
+    // gcc error: FARPROC (int __attribute((__stdcall__))*)()  to type std::function...
+    // typedef std::function<T*()> create;
+    // typedef std::function<void(T*)> destroy;
+
     typedef T* (*create)();
     typedef void (*destroy)(T*);
 

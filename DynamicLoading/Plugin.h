@@ -16,11 +16,11 @@
 #endif
 
 #ifndef DYN_CREATE_OBJ
-#define DYN_CREATE_OBJ create_object
+#   define DYN_CREATE_OBJ create_object
 #endif
 
 #ifndef DYN_DESTROY_OBJ
-#define DYN_DESTROY_OBJ destroy_object
+#   define DYN_DESTROY_OBJ destroy_object
 #endif
 
 extern "C"{

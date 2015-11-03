@@ -15,16 +15,16 @@
 using namespace std;
 using namespace DynamicLoading;
 
-#ifdef __linux__
-#   define name_fix(path, name) "./" + string(path) + "lib" + string(name) + ".so"
-#else
-#   define name_fix(path, name) "./" + string(path) + string(name) + ".dll"
-#endif
+//#ifdef __linux__
+//#   define name_fix(path, name) "./" + string(path) + "lib" + string(name) + ".so"
+//#else
+//#   define name_fix(path, name) "./" + string(path) + string(name) + ".dll"
+//#endif
 
 
 int main(int argc, char** argv)
 {
-    SharedLibrary* sl = new SharedLibrary(name_fix("plugin/", "ex3_plugin1"));
+    SharedLibrary* sl = new SharedLibrary(name_fix("ex3_plugin1", "plugin/"));
 
     DynamicObject<Base1> object1(*sl, "create_obj1", "destroy_obj1");
 
