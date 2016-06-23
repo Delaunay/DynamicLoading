@@ -32,7 +32,7 @@ inline std::string name_fix(const std::string& name, const std::string& path = "
 
 /*!
  * This class load a SharedLibrary (dll) and enable you to retrieve
- * its functions. Behavior may change accross operating system (see dlopen
+ * its functions. Behavior may change across operating system (see dlopen
  * and LoadLibraryA for more details)
  *
  * Usage
@@ -63,6 +63,8 @@ public:
     typedef HINSTANCE LibraryHandle;
 #endif
 
+    typedef void (*deleter)(LibraryHandle);
+    typedef std::shared_ptr<LibraryHandle> PtrLibrary;
     typedef std::size_t size_type;
 
     SharedLibrary(const SharedLibrary& lib);

@@ -29,7 +29,7 @@ int main(int argc, char** argv)
     create_function_name() = "create";
     destroy_function_name() = "destroy";
 
-    DynamicObject<Base> object1(name_fix("ex2_plugin1", "plugin/"));
+    DynamicUnique<Base> object1(name_fix("ex2_plugin1", "plugin/"));
 
     cout << "Plugin 1: " << object1->function(1) << "\n";
 
@@ -37,7 +37,7 @@ int main(int argc, char** argv)
     //--------------
 
     // specify function name
-    DynamicObject<Base> object2(name_fix("ex2_plugin2", "plugin/"),
+    DynamicUnique<Base> object2(name_fix("ex2_plugin2", "plugin/"),
                                 "create_plugin", "destroy_plugin");
 
     cout << "Plugin 2: " << object2->function(1) << "\n";

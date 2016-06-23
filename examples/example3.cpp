@@ -26,7 +26,7 @@ int main(int argc, char** argv)
 {
     SharedLibrary* sl = new SharedLibrary(name_fix("ex3_plugin1", "plugin/"));
 
-    DynamicObject<Base1> object1(*sl, "create_obj1", "destroy_obj1");
+    DynamicUnique<Base1> object1(*sl, "create_obj1", "destroy_obj1");
 
     delete sl;
 
@@ -34,7 +34,7 @@ int main(int argc, char** argv)
     // Shared library was not unloaded
     SharedLibrary sl2 = object1.shared_library();
 
-    DynamicObject<Base2> object2(sl2, "create_obj2", "destroy_obj2");
+    DynamicUnique<Base2> object2(sl2, "create_obj2", "destroy_obj2");
 
 
     cout << "Plugin 1: " << object1->function1(1) << "\n";

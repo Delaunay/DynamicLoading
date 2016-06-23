@@ -25,7 +25,8 @@ SharedLibrary::SharedLibrary(const std::string& name, int flag):
     _module = dlopen(name.c_str(), flag);
 
     // Throw
-    THROW(_module == 0, std::runtime_error, "Module Loading Failure");
+    THROW(_module == 0, std::runtime_error,
+      "Module Loading Failure (Module does not exist)");
 
     // increasing ref only if loading was successful
     _ref_count = new size_type(1);

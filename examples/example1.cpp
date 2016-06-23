@@ -7,6 +7,7 @@
 #include <iostream>
 #include <string>
 #include <DynamicLoading/DynamicObject.h>
+#include <functional>
 
 #include "ex1_Base.h"
 
@@ -22,11 +23,11 @@ using namespace DynamicLoading;
 
 int main(int argc, char** argv)
 {
-    DynamicObject<Base> object1(name_fix("ex1_plugin1", "plugin/"));
+    DynamicUnique<Base> object1(name_fix("ex1_plugin1", "plugin/"));
 
     cout << "Plugin 1: " << object1->function(1) << "\n";
 
-    DynamicObject<Base> object2(name_fix("ex1_plugin2", "plugin/"));
+    DynamicUnique<Base> object2(name_fix("ex1_plugin2", "plugin/"));
 
     cout << "Plugin 2: " << object2->function(1) << "\n";
 

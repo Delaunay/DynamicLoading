@@ -22,7 +22,7 @@ using namespace DynamicLoading;
 
 int main(int argc, char** argv)
 {
-    DynamicObject<Base> object(name_fix("ex4_plugin1", "plugin/"));
+    DynamicUnique<Base> object(name_fix("ex4_plugin1", "plugin/"));
 
     cout << "     Obj : " << object->function() << "\n";
 

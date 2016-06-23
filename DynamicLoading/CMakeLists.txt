@@ -8,3 +8,4 @@ set(DLL_HEADER
 )
 
 add_library(plugin_library ${DLL_SOURCE} ${DLL_HEADER})
+SET_PROPERTY(TARGET plugin_library PROPERTY CXX_STANDARD 11)
