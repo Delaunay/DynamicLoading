@@ -13,13 +13,13 @@
 namespace DynamicLoading{
 // Copy constructor Increase count and copy module
 SharedLibrary::SharedLibrary(const SharedLibrary& lib):
-    _module(lib._module), _ref_count(lib._ref_count)
+    _ref_count(lib._ref_count), _module(lib._module)
 {
     ++(*_ref_count);
 }
 
 SharedLibrary::SharedLibrary(const std::string& name, int flag):
-    _module(nullptr), _ref_count(nullptr)
+    _ref_count(nullptr), _module(nullptr)
 {
     // try loading
     _module = dlopen(name.c_str(), flag);
@@ -48,7 +48,7 @@ SharedLibrary& SharedLibrary::operator= (const SharedLibrary& lib)
     return *this;
 }
 
-SharedLibrary::~SharedLibrary()
+SharedLibrary::~SharedLibrary() noexcept
 {
     if (--(*_ref_count) == 0){
         close_module();

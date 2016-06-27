@@ -178,6 +178,9 @@ public:
 
 private:
 
+    // used when new_object() is called
+    DynamicObject() {}
+
     void get_functions(const std::string& cname, const std::string& dname)
     {
         _create = _dynlib_ref.get_function_nocheck<create_type>(cname);

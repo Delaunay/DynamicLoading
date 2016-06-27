@@ -22,7 +22,7 @@ using namespace DynamicLoading;
 //#endif
 
 
-int main(int argc, char** argv)
+int main(int, char**)
 {
     SharedLibrary* sl = new SharedLibrary(name_fix("ex3_plugin1", "plugin/"));
 

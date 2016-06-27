@@ -20,7 +20,7 @@ using namespace DynamicLoading;
 //#endif
 
 
-int main(int argc, char** argv)
+int main(int, char**)
 {
     DynamicUnique<Base> object(name_fix("ex4_plugin1", "plugin/"));
 
