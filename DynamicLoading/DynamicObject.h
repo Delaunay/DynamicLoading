@@ -2,7 +2,6 @@
 #define CXXMODULE_DYNMOD_HEADER
 
 #include "SharedLibrary.h"
-
 //#include <functional>
 
 namespace DynamicLoading{
@@ -18,6 +17,32 @@ inline std::string& destroy_function_name()
 {
     static std::string destroy = "destroy_object";
     return destroy;
+}
+
+namespace internal{
+template<typename T>
+struct fun{
+  typedef T* (*create)();
+  typedef void (*destroy)(T*);
+};
+
+template<typename T>
+struct Deleter
+{
+    typedef typename internal::fun<T>::destroy destroy_type;
+
+    Deleter() {}
+
+    Deleter(destroy_type d):
+        destroy(d)
+    {}
+
+    void operator () (T* t) {
+        destroy(t);
+    }
+
+    destroy_type destroy;
+};
 }
 
 /*!
@@ -44,14 +69,18 @@ inline std::string& destroy_function_name()
  *
  *  You can also specify them during the DynamicObject creation
  *
- *      DynamicObject<BaseObject> dyn_object("./libSharedLib.so", "my_create", "my_destroy");
+ *      DynamicUnique<BaseObject> dyn_object("./libSharedLib.so", "my_create", "my_destroy");
+ *
+ *                      OR
+ *
+ *      DynamicShared<BaseObject> dyn_object("./libSharedLib.so", "my_create", "my_destroy");
  *
  * Usage
  * ----------
  *
  *  -*- Example 1 -*-
  *
- *    DynamicObject<BaseObject> dyn_object("./libSharedLib.so");
+ *    DynamicUnique<BaseObject> dyn_object("./libSharedLib.so");
  *
  *    dyn_object->what_ever_function();
  *
@@ -59,9 +88,9 @@ inline std::string& destroy_function_name()
  *
  *    SharedLibrary sl("./libSharedLib.so");
  *
- *    DynamicObject<BaseObject1> dyn_object1(sl);
+ *    DynamicUnique<BaseObject1> dyn_object1(sl);
  *
- *    DynamicObject<BaseObject2> dyn_object2(sl, "create2", "destroy2");
+ *    DynamicShared<BaseObject2> dyn_object2(sl, "create2", "destroy2");
  *
  *
  * Warning
@@ -79,39 +108,14 @@ inline std::string& destroy_function_name()
  *
  */
 
-/*
-template<typename T>
-class Deleter
-{
-public:
-    typedef void (*type)(T*);
-};*/
-
-template<typename T>
-class Deleter{
-public:
-    typedef void (*destroy)(T*);
-
-    Deleter() = default;
-
-    Deleter(destroy t):
-        _d(t)
-    {}
-
-    void operator() (T* t){
-        _d(t);
-    }
-
-    destroy _d;
-};
-
 template<typename T, typename PtrType>
 class DynamicObject
 {
 public:
-    typedef T* (*create)();
-    typedef void (*destroy)(T*);
-    //typedef typename PtrType<T, destroy> PtrObject;
+    typedef typename internal::fun<T>::create create_type;
+    typedef typename internal::fun<T>::destroy destroy_type;
+    typedef T       value_type;
+    typedef PtrType ptr_type;
 
     // Load a dynamic library
     DynamicObject(const std::string& path,
@@ -154,8 +158,8 @@ public:
         return *this;
     }
 
-    inline T& operator* ()  {   return *_internal_dyn_object;   }
-    inline T* operator->()  {   return _internal_dyn_object.get();     }
+    inline value_type& operator* ()  {   return *_internal_dyn_object;   }
+    inline value_type* operator->()  {   return _internal_dyn_object.get();     }
 
     inline SharedLibrary& shared_library() {   return _dynlib_ref;             }
     inline operator bool() const           {   return _internal_dyn_object;    }
@@ -176,48 +180,38 @@ private:
 
     void get_functions(const std::string& cname, const std::string& dname)
     {
-        _create = _dynlib_ref.get_function_nocheck<create>(cname);
+        _create = _dynlib_ref.get_function_nocheck<create_type>(cname);
         THROW(_create == 0, std::runtime_error, "create method is undefined");
 
-        _destroy = _dynlib_ref.get_function_nocheck<destroy>(dname);
+        _destroy = _dynlib_ref.get_function_nocheck<destroy_type>(dname);
         THROW(_destroy == 0, std::runtime_error, "destroy method is undefined");
     }
 
-    void create_object();
-
-    DynamicObject() {}
+    void create_object(){
+        // NB: the usage of a Deleter functor is not necessary for std::shared_ptr
+        //     but is necessary for std::unique_ptr as pointer functions are not allowed
+        _internal_dyn_object = ptr_type(_create(), internal::Deleter<value_type>(_destroy));
+        THROW(!_internal_dyn_object, std::runtime_error, "create method call failure");
+    }
 
 private:
-    SharedLibrary _dynlib_ref;
-    create    _create{nullptr};
-    destroy   _destroy{nullptr};
-    PtrType _internal_dyn_object{nullptr};
+    SharedLibrary  _dynlib_ref;
+    create_type    _create{nullptr};
+    destroy_type   _destroy{nullptr};
+    ptr_type       _internal_dyn_object{nullptr};
 };
 
-template<typename T, typename PtrType>
-void DynamicObject<T, PtrType>::create_object()
-{
-    _internal_dyn_object = PtrType(_create());
-    _internal_dyn_object.get_deleter() = Deleter<T>(_destroy);
-
-    THROW(!_internal_dyn_object, std::runtime_error, "create method call failure");
+// we don't want our unique_ptr to clash with std::unique_ptr
+namespace util{
+template<typename T>
+using unique_ptr = std::unique_ptr<T, internal::Deleter<T>>;
 }
 
-// Need to make a partial specialization
-//template<typename T>
-//void DynamicObject<T, std::shared_ptr<T> >::create_object()
-//{
-//    _internal_dyn_object = std::shared_ptr<T>(_create(), _destroy);
-//    //_internal_dyn_object.get_deleter() = Deleter<T>(_destroy);
-
-//    THROW(!_internal_dyn_object, std::runtime_error, "create method call failure");
-//}
+template<typename T>
+using DynamicUnique = DynamicObject<T, util::unique_ptr<T>>;
 
 template<typename T>
-using DynamicUnique = DynamicObject<T, std::unique_ptr<T, Deleter<T> > >;
-
-//template<typename T>
-//using DynamicShared = DynamicObject<T, std::shared_ptr<T> >;
+using DynamicShared = DynamicObject<T, std::shared_ptr<T>>;
 
 }
 

@@ -27,7 +27,7 @@ int main(int argc, char** argv)
 
     cout << "Plugin 1: " << object1->function(1) << "\n";
 
-    DynamicUnique<Base> object2(name_fix("ex1_plugin2", "plugin/"));
+    DynamicShared<Base> object2(name_fix("ex1_plugin2", "plugin/"));
 
     cout << "Plugin 2: " << object2->function(1) << "\n";
 

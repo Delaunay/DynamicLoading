@@ -63,8 +63,6 @@ public:
     typedef HINSTANCE LibraryHandle;
 #endif
 
-    typedef void (*deleter)(LibraryHandle);
-    typedef std::shared_ptr<LibraryHandle> PtrLibrary;
     typedef std::size_t size_type;
 
     SharedLibrary(const SharedLibrary& lib);
